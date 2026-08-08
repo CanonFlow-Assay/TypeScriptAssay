@@ -79,7 +79,7 @@ See [scope and profiles](docs/scope-and-profiles.md), [the evidence model](docs/
 
 ## Limits
 
-`readonly` is static surface evidence, not deep runtime immutability. Discriminated-union, dynamic-access, boundary, effect, and transport rules each observe the exact bounded subset stated in the catalog. No rule proves every external input was validated or every effect is pure.
+`readonly` is static surface evidence, not deep runtime immutability. Classes, enums, assertions, and promises are not universal bans; assertions are explicit escape-hatch evidence and any other restriction must be an explicit future policy choice. Discriminated-union, dynamic-access, boundary, effect, and transport rules each observe the exact bounded subset stated in the catalog. No rule proves every external input was validated or every effect is pure.
 
 ## Contributing and security
 

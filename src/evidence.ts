@@ -170,7 +170,22 @@ export const evaluate = (
   const scope = resolveScope(loaded.root, loaded.policy);
   const analysis = analyze(loaded.root, loaded.policy, scope);
   const commands = runCommands(loaded.policy.requiredCommands, loaded.root, mode === 'verify');
-  const decision = decide(mode, analysis, commands);
+  const lockDigest = packageLockDigest(loaded.root);
+  const initialDecision = decide(mode, analysis, commands);
+  const decision =
+    mode === 'verify' && lockDigest === null
+      ? {
+          verdict: {
+            kind: 'Inconclusive' as const,
+            reason: 'No package-lock.json was available to bind the npm dependency graph.'
+          },
+          authoritative: false,
+          limitations: [
+            ...initialDecision.limitations,
+            'No package-lock.json was found at or above the policy root; verify cannot bind the npm dependency graph.'
+          ]
+        }
+      : initialDecision;
   const sortedFindings = [...analysis.findings].sort(
     (left, right) =>
       left.path.localeCompare(right.path) ||
@@ -189,7 +204,7 @@ export const evaluate = (
     },
     policy: { profile: loaded.policy.profile, digest: loaded.digest },
     ruleCatalogDigest,
-    packageLockDigest: packageLockDigest(loaded.root),
+    packageLockDigest: lockDigest,
     toolchain: runtimeToolchain(),
     scope: scope.evidence,
     findings: sortedFindings,

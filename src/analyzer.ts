@@ -590,6 +590,12 @@ export const sourceContentDigest = (root: string, paths: readonly string[]): str
   );
 
 export const packageLockDigest = (root: string): string | null => {
-  const lock = resolve(root, 'package-lock.json');
-  return existsSync(lock) ? sha256(readFileSync(lock)) : null;
+  let directory = resolve(root);
+  for (;;) {
+    const lock = resolve(directory, 'package-lock.json');
+    if (existsSync(lock)) return sha256(readFileSync(lock));
+    const parent = dirname(directory);
+    if (parent === directory) return null;
+    directory = parent;
+  }
 };

@@ -1,5 +1,13 @@
 import { strict as assert } from 'node:assert';
-import { cpSync, existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import {
+  cpSync,
+  existsSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  unlinkSync,
+  writeFileSync
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
@@ -92,6 +100,19 @@ test('incomplete scope cannot be authoritative', () => {
     const result = evaluate(loadPolicy(path), 'verify', clock).receipt;
     assert.equal(result.verdict.kind, 'Inconclusive');
     assert.equal(result.authoritative, false);
+  } finally {
+    rmSync(path, { recursive: true, force: true });
+  }
+});
+
+test('verify without a package lock cannot be authoritative', () => {
+  const path = copiedFixture('TSA-B01', 'good');
+  try {
+    unlinkSync(resolve(path, 'package-lock.json'));
+    const result = evaluate(loadPolicy(path), 'verify', clock).receipt;
+    assert.equal(result.verdict.kind, 'Inconclusive');
+    assert.equal(result.authoritative, false);
+    assert.equal(result.packageLockDigest, null);
   } finally {
     rmSync(path, { recursive: true, force: true });
   }
@@ -221,6 +242,7 @@ test('parser and required-command tool failures are non-authoritative', () => {
 const copiedFixture = (rule: string, kind: 'good' | 'bad'): string => {
   const path = mkdtempSync(resolve(tmpdir(), 'ts-assay-test-'));
   cpSync(resolve(fixtureRoot, rule, kind), path, { recursive: true });
+  cpSync(resolve('package-lock.json'), resolve(path, 'package-lock.json'));
   return path;
 };
 
