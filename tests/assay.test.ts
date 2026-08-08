@@ -169,12 +169,30 @@ test('CLI fixture checks emit a passing receipt and a failing receipt', () => {
 
 test('CLI invalid policy and missing target cannot pass', () => {
   const path = copiedFixture('TSA-B01', 'good');
+  const artifacts = mkdtempSync(resolve(tmpdir(), 'ts-assay-invalid-'));
   try {
     writeFileSync(resolve(path, '.tsassay.json'), '{"profile":"new"}\n');
-    assert.equal(runCli('verify', path).status, 2);
-    assert.equal(runCli('verify', resolve(path, 'not-here')).status, 2);
+    const invalidReceipt = resolve(artifacts, 'invalid.json');
+    const missingReceipt = resolve(artifacts, 'missing.json');
+    assert.equal(
+      runCli('verify', path, invalidReceipt, resolve(artifacts, 'invalid.sarif')).status,
+      2
+    );
+    assert.equal(JSON.parse(readFileSync(invalidReceipt, 'utf8')).verdict.kind, 'ToolFailure');
+    assert.equal(JSON.parse(readFileSync(invalidReceipt, 'utf8')).authoritative, false);
+    assert.equal(
+      runCli(
+        'verify',
+        resolve(path, 'not-here'),
+        missingReceipt,
+        resolve(artifacts, 'missing.sarif')
+      ).status,
+      2
+    );
+    assert.equal(JSON.parse(readFileSync(missingReceipt, 'utf8')).verdict.kind, 'ToolFailure');
   } finally {
     rmSync(path, { recursive: true, force: true });
+    rmSync(artifacts, { recursive: true, force: true });
   }
 });
 

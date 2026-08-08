@@ -11,7 +11,7 @@ import { resolveScope } from './scope.js';
 
 const cliVersion = '0.1.0';
 
-const installedNpmVersion = (): string => {
+export const installedNpmVersion = (): string => {
   try {
     return execFileSync('npm', ['--version'], { encoding: 'utf8' }).trim();
   } catch {
@@ -150,6 +150,13 @@ const clock = (controlledClock: string | undefined): string => {
   return environmentClock === undefined ? new Date().toISOString() : environmentClock;
 };
 
+export const runtimeToolchain = (): Receipt['toolchain'] => ({
+  node: process.version,
+  packageManager: `npm ${installedNpmVersion()}`,
+  typescript: ts.version,
+  cli: cliVersion
+});
+
 export interface Evaluation {
   readonly receipt: Receipt;
   readonly sarif: Record<string, unknown>;
@@ -183,12 +190,7 @@ export const evaluate = (
     policy: { profile: loaded.policy.profile, digest: loaded.digest },
     ruleCatalogDigest,
     packageLockDigest: packageLockDigest(loaded.root),
-    toolchain: {
-      node: process.version,
-      packageManager: `npm ${installedNpmVersion()}`,
-      typescript: ts.version,
-      cli: cliVersion
-    },
+    toolchain: runtimeToolchain(),
     scope: scope.evidence,
     findings: sortedFindings,
     findingsDigest: sha256(canonicalJson(sortedFindings)),
@@ -199,6 +201,42 @@ export const evaluate = (
     artifacts: { sarifDigest: sha256(canonicalJson(sarif)) }
   };
   return { receipt, sarif };
+};
+
+export const toolFailureEvaluation = (
+  mode: 'scan' | 'verify',
+  error: string,
+  controlledClock?: string
+): Evaluation => {
+  const sarif = toSarif('', []);
+  return {
+    receipt: {
+      schemaVersion: 'ts-assay-receipt/0.1',
+      mode,
+      generatedAt: clock(controlledClock),
+      candidate: { revision: null, sourceContentDigest: null },
+      policy: { profile: null, digest: null },
+      ruleCatalogDigest,
+      packageLockDigest: null,
+      toolchain: runtimeToolchain(),
+      scope: {
+        scannedPaths: [],
+        domainPaths: [],
+        boundaryPaths: [],
+        excludedPaths: [],
+        unmatchedGlobs: [],
+        complete: false
+      },
+      findings: [],
+      findingsDigest: sha256(canonicalJson([])),
+      requiredCommands: [],
+      verdict: { kind: 'ToolFailure', error },
+      authoritative: false,
+      authorityLimitations: [error],
+      artifacts: { sarifDigest: sha256(canonicalJson(sarif)) }
+    },
+    sarif
+  };
 };
 
 export const toSarif = (root: string, findings: readonly Finding[]): Record<string, unknown> => ({

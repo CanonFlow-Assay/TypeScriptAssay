@@ -1,9 +1,8 @@
 #!/usr/bin/env node
 import { resolve } from 'node:path';
-import ts from 'typescript';
 import { canonicalJson } from './canonical.js';
 import { findRule, ruleCatalogDigest } from './catalog.js';
-import { evaluate, writeArtifacts } from './evidence.js';
+import { evaluate, runtimeToolchain, toolFailureEvaluation, writeArtifacts } from './evidence.js';
 import { loadPolicy } from './policy.js';
 
 interface OutputOptions {
@@ -86,7 +85,7 @@ const main = (): number => {
         canonicalJson({
           kind: 'Doctor',
           policy: { path: loaded.path, ready: true, digest: loaded.digest },
-          toolchain: { node: process.version, typescript: ts.version, cli: '0.1.0' },
+          toolchain: runtimeToolchain(),
           complianceClaim: false
         })
       );
@@ -110,8 +109,16 @@ const main = (): number => {
     process.stderr.write(`${command} requires a target path\n`);
     return 2;
   }
+  let output: OutputOptions;
   try {
-    const output = parseOutputs(remaining);
+    output = parseOutputs(remaining);
+  } catch (error) {
+    process.stderr.write(
+      `ToolFailure: ${error instanceof Error ? error.message : String(error)}\n`
+    );
+    return 2;
+  }
+  try {
     const loaded = loadPolicy(resolve(first));
     const evaluation = evaluate(loaded, command, output.clock);
     writeArtifacts(evaluation, output.json, output.sarif);
@@ -124,8 +131,11 @@ const main = (): number => {
         ? 1
         : 2;
   } catch (error) {
-    process.stderr.write(
-      `ToolFailure: ${error instanceof Error ? error.message : String(error)}\n`
+    const message = error instanceof Error ? error.message : String(error);
+    const failure = toolFailureEvaluation(command, message, output.clock);
+    writeArtifacts(failure, output.json, output.sarif);
+    process.stdout.write(
+      `${readable(failure.receipt)}\njson: ${output.json}\nsarif: ${output.sarif}\n`
     );
     return 2;
   }

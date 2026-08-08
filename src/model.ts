@@ -72,8 +72,11 @@ export interface Receipt {
   readonly schemaVersion: 'ts-assay-receipt/0.1';
   readonly mode: 'scan' | 'verify';
   readonly generatedAt: string;
-  readonly candidate: { readonly revision: string | null; readonly sourceContentDigest: string };
-  readonly policy: { readonly profile: Profile; readonly digest: string };
+  readonly candidate: {
+    readonly revision: string | null;
+    readonly sourceContentDigest: string | null;
+  };
+  readonly policy: { readonly profile: Profile | null; readonly digest: string | null };
   readonly ruleCatalogDigest: string;
   readonly packageLockDigest: string | null;
   readonly toolchain: {
