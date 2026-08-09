@@ -1,8 +1,8 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, relative, resolve } from 'node:path';
 import ts from 'typescript';
-import { sha256 } from './canonical.js';
-import type { AnalysisResult, Finding, Policy, Severity } from './model.js';
+import { canonicalJson, sha256 } from './canonical.js';
+import type { AnalysisResult, Finding, Policy, ProjectConfigEvidence, Severity } from './model.js';
 import type { ResolvedScope } from './scope.js';
 
 const normalized = (path: string): string => path.replaceAll('\\', '/');
@@ -136,9 +136,44 @@ const effectModule = (moduleName: string): boolean =>
   knownEffectModules.has(moduleName.startsWith('node:') ? moduleName.slice(5) : moduleName);
 
 interface ProgramLoad {
-  readonly program: ts.Program;
+  readonly program: ts.Program | null;
   readonly errors: readonly string[];
+  readonly projectConfig: ProjectConfigEvidence;
 }
+
+const emptyProjectConfig = (): ProjectConfigEvidence => ({
+  chain: [],
+  effectiveCompilerOptionsDigest: null,
+  complete: false
+});
+
+const projectConfigEvidence = (
+  root: string,
+  config: string,
+  configSource: ts.TsConfigSourceFile,
+  parsed: ts.ParsedCommandLine
+): ProjectConfigEvidence => {
+  const paths = [
+    resolve(config),
+    ...(configSource.extendedSourceFiles ?? []).map((path) => resolve(path))
+  ].filter((path, index, all) => all.indexOf(path) === index);
+  const chain = paths.map((path) => {
+    try {
+      return {
+        path: normalized(relative(root, path)),
+        digest: sha256(readFileSync(path))
+      };
+    } catch {
+      return { path: normalized(relative(root, path)), digest: null };
+    }
+  });
+  const complete = parsed.errors.length === 0 && chain.every((config) => config.digest !== null);
+  return {
+    chain,
+    effectiveCompilerOptionsDigest: complete ? sha256(canonicalJson(parsed.options)) : null,
+    complete
+  };
+};
 
 const loadProgram = (root: string): ProgramLoad => {
   const config = ts.findConfigFile(root, (path) => ts.sys.fileExists(path), 'tsconfig.json');
@@ -146,8 +181,9 @@ const loadProgram = (root: string): ProgramLoad => {
   const configRead = ts.readConfigFile(config, (path) => ts.sys.readFile(path));
   if (configRead.error !== undefined)
     throw new Error(ts.flattenDiagnosticMessageText(configRead.error.messageText, '\n'));
-  const parsed = ts.parseJsonConfigFileContent(
-    configRead.config,
+  const configSource = ts.readJsonConfigFile(config, (path) => ts.sys.readFile(path));
+  const parsed = ts.parseJsonSourceFileConfigFileContent(
+    configSource,
     ts.sys,
     dirname(config),
     undefined,
@@ -156,22 +192,44 @@ const loadProgram = (root: string): ProgramLoad => {
   const errors = parsed.errors.map((diagnostic) =>
     ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n')
   );
+  const projectConfig = projectConfigEvidence(root, config, configSource, parsed);
+  if (errors.length > 0) return { program: null, errors, projectConfig };
   const program = ts.createProgram({ rootNames: parsed.fileNames, options: parsed.options });
-  return { program, errors };
+  return {
+    program,
+    errors,
+    projectConfig
+  };
 };
 
 export const analyze = (root: string, policy: Policy, scope: ResolvedScope): AnalysisResult => {
   const findings: Finding[] = [];
   const toolFailures: string[] = [];
   let program: ts.Program;
+  let projectConfig: ProjectConfigEvidence;
   try {
     const loaded = loadProgram(root);
-    program = loaded.program;
+    projectConfig = loaded.projectConfig;
     toolFailures.push(...loaded.errors);
+    if (loaded.program === null) {
+      return {
+        findings: [],
+        scope: {
+          ...scope.evidence,
+          unloadedPaths: scope.evidence.scannedPaths,
+          complete: false
+        },
+        projectConfig,
+        analysisLimitations: ['The TypeScript project configuration could not be loaded.'],
+        toolFailures
+      };
+    }
+    program = loaded.program;
   } catch (error) {
     return {
       findings: [],
       scope: scope.evidence,
+      projectConfig: emptyProjectConfig(),
       analysisLimitations: ['The TypeScript project could not be loaded.'],
       toolFailures: [error instanceof Error ? error.message : String(error)]
     };
@@ -597,6 +655,7 @@ export const analyze = (root: string, policy: Policy, scope: ResolvedScope): Ana
   return {
     findings: deduplicated.sort(compareFindings),
     scope: analysisScope,
+    projectConfig,
     analysisLimitations: [
       'Static observations are limited to selected TypeScript/TSX files and configured rules.',
       'Readonly evidence is compile-time surface evidence, not deep runtime immutability.',

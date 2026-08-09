@@ -37,7 +37,7 @@ node dist/src/cli.js verify examples/clean --json artifacts/receipt.json --sarif
 node dist/src/cli.js explain TSA-D02
 ```
 
-`doctor` describes installed tooling and policy readiness; it makes no compliance claim. `scan` performs static analysis and records required evidence as `not-run`. `verify` executes every configured required command and binds its status, exit code, and output digest to its receipt.
+`doctor` describes installed tooling and policy readiness; it makes no compliance claim. `scan` performs static analysis and records required evidence as `not-run`. `verify` executes every configured required command and binds its status, exit code, and output digest to its receipt. Receipts also bind the resolved `tsconfig`/`extends` chain, exact config digests, and effective Compiler API options digest.
 
 `verify` exits `0` for Pass, `1` for Fail, and `2` for Inconclusive or ToolFailure. Invalid policy, a missing target, a parser/project failure, incomplete source scope, unavailable required commands, and skipped evidence cannot become Pass.
 

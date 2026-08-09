@@ -2,6 +2,7 @@ import { strict as assert } from 'node:assert';
 import {
   cpSync,
   existsSync,
+  mkdirSync,
   mkdtempSync,
   readFileSync,
   rmSync,
@@ -12,7 +13,7 @@ import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import test from 'node:test';
-import { canonicalJson } from '../src/canonical.js';
+import { canonicalJson, sha256 } from '../src/canonical.js';
 import { evaluate, toSarif } from '../src/evidence.js';
 import { loadPolicy } from '../src/policy.js';
 
@@ -283,6 +284,104 @@ test('selected scoped files excluded from tsconfig cannot become an authoritativ
     assert.equal(result.authoritative, false);
     assert.deepEqual(result.scope.unloadedPaths, ['src/adapters/http.ts', 'src/domain/user.ts']);
     assert.equal(result.scope.complete, false);
+  } finally {
+    rmSync(path, { recursive: true, force: true });
+  }
+});
+
+test('receipt binds a resolved tsconfig extends chain and effective compiler options', () => {
+  const path = copiedFixture('TSA-B01', 'good');
+  try {
+    const configDirectory = resolve(path, 'node_modules/@ts-assay/config');
+    mkdirSync(configDirectory, { recursive: true });
+    writeFileSync(
+      resolve(configDirectory, 'package.json'),
+      `${JSON.stringify(
+        { name: '@ts-assay/config', version: '1.0.0', tsconfig: 'tsconfig.json' },
+        null,
+        2
+      )}\n`
+    );
+    writeFileSync(
+      resolve(configDirectory, 'base.json'),
+      `${JSON.stringify(
+        {
+          compilerOptions: {
+            strict: true,
+            module: 'NodeNext',
+            moduleResolution: 'NodeNext',
+            noEmit: true
+          }
+        },
+        null,
+        2
+      )}\n`
+    );
+    writeFileSync(
+      resolve(configDirectory, 'tsconfig.json'),
+      `${JSON.stringify(
+        { extends: './base.json', compilerOptions: { noFallthroughCasesInSwitch: true } },
+        null,
+        2
+      )}\n`
+    );
+    writeFileSync(
+      resolve(path, 'tsconfig.json'),
+      `${JSON.stringify({ extends: '@ts-assay/config', include: ['src/**/*.ts'] }, null, 2)}\n`
+    );
+
+    const first = evaluate(loadPolicy(path), 'verify', clock).receipt;
+    const second = evaluate(loadPolicy(path), 'verify', clock).receipt;
+    assert.equal(first.verdict.kind, 'Pass');
+    assert.equal(first.authoritative, true);
+    assert.equal(first.projectConfig.complete, true);
+    assert.deepEqual(
+      first.projectConfig.chain.map((config) => config.path),
+      [
+        'tsconfig.json',
+        'node_modules/@ts-assay/config/tsconfig.json',
+        'node_modules/@ts-assay/config/base.json'
+      ]
+    );
+    assert.deepEqual(
+      first.projectConfig.chain.map((config) => config.digest),
+      first.projectConfig.chain.map((config) => sha256(readFileSync(resolve(path, config.path))))
+    );
+    assert.match(first.projectConfig.effectiveCompilerOptionsDigest ?? '', /^[a-f0-9]{64}$/);
+    assert.equal(
+      first.projectConfig.effectiveCompilerOptionsDigest,
+      second.projectConfig.effectiveCompilerOptionsDigest
+    );
+  } finally {
+    rmSync(path, { recursive: true, force: true });
+  }
+});
+
+test('a missing extended config is incomplete project evidence and cannot pass', () => {
+  const path = copiedFixture('TSA-B01', 'good');
+  try {
+    writeFileSync(
+      resolve(path, 'tsconfig.json'),
+      `${JSON.stringify(
+        {
+          extends: './config/missing.json',
+          include: ['src/**/*.ts']
+        },
+        null,
+        2
+      )}\n`
+    );
+    const result = evaluate(loadPolicy(path), 'verify', clock).receipt;
+    assert.equal(result.verdict.kind, 'ToolFailure');
+    assert.equal(result.authoritative, false);
+    assert.equal(result.projectConfig.complete, false);
+    assert.deepEqual(
+      result.projectConfig.chain.map((config) => config.path),
+      ['tsconfig.json', 'config/missing.json']
+    );
+    assert.equal(result.projectConfig.chain[0]?.digest === null, false);
+    assert.equal(result.projectConfig.chain[1]?.digest, null);
+    assert.equal(result.projectConfig.effectiveCompilerOptionsDigest, null);
   } finally {
     rmSync(path, { recursive: true, force: true });
   }
