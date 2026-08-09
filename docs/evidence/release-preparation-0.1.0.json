@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "ts-assay-release-preparation-evidence/0.1",
+  "observedAt": "2026-08-09T11:00:00.000Z",
+  "baseMainRevision": "2f0a1600e03a4fa2b7cdc860e50e70cd6e88e2b0",
+  "package": {
+    "name": "typescript-assay",
+    "version": "0.1.0",
+    "filename": "typescript-assay-0.1.0.tgz",
+    "sha256": "b81b5fdb1da6a7f3dcae0e9783a916290550a34cb6db4c2760e927cfe9c89480",
+    "shasum": "1409d4f441db13d5b9c3b1042e983a713267a17a",
+    "integrity": "sha512-ZddFFoeKg+8iyLtlP51RPcrLOEqmWEdE/FF7/z6q9WqzGx5gnX0FAhqon8BapVg9H16LdQCmZZpLjkvd5M/Bvw==",
+    "entryCount": 22,
+    "packedSurface": [
+      "dist/src",
+      "README.md",
+      "LICENSE",
+      "SECURITY.md",
+      "CONTRIBUTING.md",
+      "CODE_OF_CONDUCT.md"
+    ]
+  },
+  "toolchain": {
+    "node": "v20.20.2",
+    "npm": "10.8.2",
+    "typescript": "5.7.3"
+  },
+  "cleanInstall": {
+    "command": "npm install --ignore-scripts <tarball>",
+    "exitCode": 0,
+    "installedPackages": 20
+  },
+  "installedCli": [
+    {
+      "command": "ts-assay --help",
+      "exitCode": 0
+    },
+    {
+      "command": "ts-assay doctor .",
+      "exitCode": 0,
+      "complianceClaim": false
+    },
+    {
+      "command": "ts-assay scan . --json scan.json --sarif scan.sarif --clock 2026-08-09T11:00:00.000Z",
+      "exitCode": 2,
+      "verdict": "Inconclusive",
+      "authoritative": false
+    },
+    {
+      "command": "ts-assay verify . --json verify.json --sarif verify.sarif --clock 2026-08-09T11:00:00.000Z",
+      "exitCode": 0,
+      "verdict": "Pass",
+      "authoritative": true,
+      "receiptSha256": "0d6ba6315cecb4bc46b20e0b8f7f8484eef93d20a24797bdb2200acdce6289e0",
+      "sarifSha256": "d3ea519d2968d1183f5549c1a9203c260288eb242895fd9db107803b51212548"
+    }
+  ],
+  "registryNameLookup": {
+    "command": "npm view typescript-assay name version license --json",
+    "observedResult": "404 not found",
+    "meaning": "No existing package was found at this name during this preparation run; recheck ownership and availability before a separate publish decision."
+  },
+  "limitations": [
+    "This proves only local tarball installation and the listed CLI invocations in a clean temporary npm project.",
+    "This evidence is not a publish, release, provenance attestation, or registry-ownership proof."
+  ]
+}

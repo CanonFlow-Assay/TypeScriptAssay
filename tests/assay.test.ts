@@ -387,6 +387,127 @@ test('a missing extended config is incomplete project evidence and cannot pass',
   }
 });
 
+test('packed CLI installs into a clean project and runs its public commands', () => {
+  const path = mkdtempSync(resolve(tmpdir(), 'ts-assay-package-'));
+  try {
+    const packedDirectory = resolve(path, 'packed');
+    mkdirSync(packedDirectory, { recursive: true });
+    const packed = spawnSync('npm', ['pack', '--json', '--pack-destination', packedDirectory], {
+      cwd: resolve('.'),
+      encoding: 'utf8'
+    });
+    assert.equal(packed.status, 0, `npm pack failed: ${packed.stderr}`);
+    const packageMetadata = JSON.parse(packed.stdout) as readonly {
+      readonly filename: string;
+      readonly files: readonly { readonly path: string }[];
+    }[];
+    const packageInfo = packageMetadata[0];
+    assert.notEqual(packageInfo, undefined);
+    assert.equal(
+      packageInfo?.files.some((file) => file.path === 'dist/src/cli.js'),
+      true,
+      'the packed archive must contain the CLI entry point'
+    );
+    const tarball = resolve(packedDirectory, packageInfo?.filename ?? 'missing.tgz');
+    assert.equal(existsSync(tarball), true);
+    assert.match(sha256(readFileSync(tarball)), /^[a-f0-9]{64}$/);
+
+    const project = resolve(path, 'consumer');
+    mkdirSync(resolve(project, 'src'), { recursive: true });
+    writeFileSync(
+      resolve(project, 'package.json'),
+      `${JSON.stringify({ name: 'clean-ts-assay-consumer', private: true, type: 'module' }, null, 2)}\n`
+    );
+    writeFileSync(
+      resolve(project, 'tsconfig.json'),
+      `${JSON.stringify(
+        {
+          compilerOptions: {
+            strict: true,
+            module: 'NodeNext',
+            moduleResolution: 'NodeNext',
+            noEmit: true
+          },
+          include: ['src/**/*.ts']
+        },
+        null,
+        2
+      )}\n`
+    );
+    writeFileSync(
+      resolve(project, '.tsassay.json'),
+      `${JSON.stringify(
+        {
+          schemaVersion: 'ts-assay-policy/0.1',
+          profile: 'new',
+          domainGlobs: ['src/**/*.ts'],
+          boundaryGlobs: [],
+          excludedGlobs: [],
+          requiredCommands: ['node -e "process.exit(0)"'],
+          escapeHatches: {
+            assertions: 'forbid',
+            nonNullAssertions: 'forbid',
+            directives: 'forbid'
+          },
+          discriminantFields: ['kind', 'type'],
+          transportTypeNames: []
+        },
+        null,
+        2
+      )}\n`
+    );
+    writeFileSync(resolve(project, 'src/domain.ts'), 'export const answer = 42;\n');
+
+    const installed = spawnSync('npm', ['install', '--ignore-scripts', tarball], {
+      cwd: project,
+      encoding: 'utf8'
+    });
+    assert.equal(installed.status, 0, `tarball install failed: ${installed.stderr}`);
+
+    const cli = resolve(project, 'node_modules/.bin/ts-assay');
+    const help = spawnSync(cli, ['--help'], { cwd: project, encoding: 'utf8' });
+    assert.equal(help.status, 0, `installed help failed: ${help.stderr}`);
+    assert.match(help.stdout, /Usage:/);
+    const doctor = spawnSync(cli, ['doctor', '.'], { cwd: project, encoding: 'utf8' });
+    assert.equal(doctor.status, 0, `installed doctor failed: ${doctor.stderr}`);
+    const doctorReport = JSON.parse(doctor.stdout) as {
+      readonly kind: string;
+      readonly toolchain: { readonly typescript: string };
+    };
+    assert.equal(doctorReport.kind, 'Doctor');
+    assert.equal(doctorReport.toolchain.typescript, '5.7.3');
+
+    const scan = spawnSync(
+      cli,
+      ['scan', '.', '--json', 'scan.json', '--sarif', 'scan.sarif', '--clock', clock],
+      { cwd: project, encoding: 'utf8' }
+    );
+    assert.equal(scan.status, 2, `installed scan failed unexpectedly: ${scan.stderr}`);
+    const scanReceipt = JSON.parse(readFileSync(resolve(project, 'scan.json'), 'utf8')) as {
+      readonly verdict: { readonly kind: string };
+      readonly authoritative: boolean;
+    };
+    assert.equal(scanReceipt.verdict.kind, 'Inconclusive');
+    assert.equal(scanReceipt.authoritative, false);
+
+    const verify = spawnSync(
+      cli,
+      ['verify', '.', '--json', 'verify.json', '--sarif', 'verify.sarif', '--clock', clock],
+      { cwd: project, encoding: 'utf8' }
+    );
+    assert.equal(verify.status, 0, `installed verify failed: ${verify.stderr}`);
+    const verifyReceipt = JSON.parse(readFileSync(resolve(project, 'verify.json'), 'utf8')) as {
+      readonly verdict: { readonly kind: string };
+      readonly authoritative: boolean;
+    };
+    assert.equal(verifyReceipt.verdict.kind, 'Pass');
+    assert.equal(verifyReceipt.authoritative, true);
+    assert.equal(existsSync(resolve(project, 'verify.sarif')), true);
+  } finally {
+    rmSync(path, { recursive: true, force: true });
+  }
+});
+
 const copiedFixture = (rule: string, kind: 'good' | 'bad'): string => {
   const path = mkdtempSync(resolve(tmpdir(), 'ts-assay-test-'));
   cpSync(resolve(fixtureRoot, rule, kind), path, { recursive: true });

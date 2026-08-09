@@ -63,7 +63,7 @@ Create `.tsassay.json` at the project root:
 }
 ```
 
-See [scope and profiles](docs/scope-and-profiles.md), [the evidence model](docs/evidence-model.md), and the [rule catalog](docs/rule-catalog.md) for the complete v0.1 contract.
+See [scope and profiles](docs/scope-and-profiles.md), [the evidence model](docs/evidence-model.md), the [rule catalog](docs/rule-catalog.md), and [release preparation](docs/release-preparation.md) for the complete v0.1 contract and local package proof.
 
 ## Relationship to adjacent tools
 
