@@ -239,6 +239,55 @@ test('parser and required-command tool failures are non-authoritative', () => {
   }
 });
 
+test('scoped unresolved-import diagnostics cannot become an authoritative pass', () => {
+  const path = copiedFixture('TSA-B01', 'good');
+  try {
+    writeFileSync(
+      resolve(path, 'src/domain/unresolved.ts'),
+      "import { missing } from './not-present.js';\nexport const value = missing;\n"
+    );
+    const result = evaluate(loadPolicy(path), 'verify', clock).receipt;
+    assert.equal(result.verdict.kind, 'ToolFailure');
+    assert.equal(result.authoritative, false);
+    assert.equal(
+      result.authorityLimitations.some((item) => item.includes('TS2307')),
+      true
+    );
+  } finally {
+    rmSync(path, { recursive: true, force: true });
+  }
+});
+
+test('selected scoped files excluded from tsconfig cannot become an authoritative pass', () => {
+  const path = copiedFixture('TSA-B01', 'good');
+  try {
+    writeFileSync(resolve(path, 'src/outside.ts'), 'export const outside = 1;\n');
+    writeFileSync(
+      resolve(path, 'tsconfig.json'),
+      `${JSON.stringify(
+        {
+          compilerOptions: {
+            strict: true,
+            module: 'NodeNext',
+            moduleResolution: 'NodeNext',
+            noEmit: true
+          },
+          include: ['src/outside.ts']
+        },
+        null,
+        2
+      )}\n`
+    );
+    const result = evaluate(loadPolicy(path), 'verify', clock).receipt;
+    assert.equal(result.verdict.kind, 'ToolFailure');
+    assert.equal(result.authoritative, false);
+    assert.deepEqual(result.scope.unloadedPaths, ['src/adapters/http.ts', 'src/domain/user.ts']);
+    assert.equal(result.scope.complete, false);
+  } finally {
+    rmSync(path, { recursive: true, force: true });
+  }
+});
+
 const copiedFixture = (rule: string, kind: 'good' | 'bad'): string => {
   const path = mkdtempSync(resolve(tmpdir(), 'ts-assay-test-'));
   cpSync(resolve(fixtureRoot, rule, kind), path, { recursive: true });

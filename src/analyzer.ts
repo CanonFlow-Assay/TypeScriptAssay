@@ -210,6 +210,32 @@ export const analyze = (root: string, policy: Policy, scope: ResolvedScope): Ana
   ): void => addAt(sourceFile, node.getStart(sourceFile), ruleId, severity, message);
   const hatches = policy.escapeHatches;
   const scopePaths = new Set(scope.evidence.scannedPaths.map((path) => resolve(root, path)));
+  const loadedPaths = new Set(
+    program.getSourceFiles().map((sourceFile) => resolve(sourceFile.fileName))
+  );
+  const unloadedPaths = scope.evidence.scannedPaths.filter(
+    (path) => !loadedPaths.has(resolve(root, path))
+  );
+  const analysisScope = {
+    ...scope.evidence,
+    unloadedPaths,
+    complete: scope.evidence.complete && unloadedPaths.length === 0
+  };
+  if (unloadedPaths.length > 0) {
+    toolFailures.push(
+      `Scoped source file(s) were not loaded by tsconfig: ${unloadedPaths.join(', ')}`
+    );
+  }
+  const diagnosticText = (sourceFile: ts.SourceFile, diagnostic: ts.Diagnostic): string =>
+    `${normalized(relative(root, sourceFile.fileName))}: TS${diagnostic.code} ${ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n')}`;
+  for (const diagnostic of [
+    ...program.getOptionsDiagnostics(),
+    ...program.getGlobalDiagnostics()
+  ]) {
+    toolFailures.push(
+      `TypeScript project diagnostic: TS${diagnostic.code} ${ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n')}`
+    );
+  }
   for (const sourceFile of program.getSourceFiles()) {
     const absolute = resolve(sourceFile.fileName);
     if (!scopePaths.has(absolute)) continue;
@@ -217,9 +243,7 @@ export const analyze = (root: string, policy: Policy, scope: ResolvedScope): Ana
     const boundary = scope.boundaryAbsolutePaths.has(absolute);
     const sourceDiagnostics = program.getSyntacticDiagnostics(sourceFile);
     for (const diagnostic of sourceDiagnostics) {
-      toolFailures.push(
-        `${normalized(relative(root, sourceFile.fileName))}: ${ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n')}`
-      );
+      toolFailures.push(diagnosticText(sourceFile, diagnostic));
     }
     for (const diagnostic of program.getSemanticDiagnostics(sourceFile)) {
       if (
@@ -233,6 +257,8 @@ export const analyze = (root: string, policy: Policy, scope: ResolvedScope): Ana
           'error',
           'Implicit any reported by the TypeScript compiler.'
         );
+      } else {
+        toolFailures.push(diagnosticText(sourceFile, diagnostic));
       }
     }
     const scanner = ts.createScanner(
@@ -570,7 +596,7 @@ export const analyze = (root: string, policy: Policy, scope: ResolvedScope): Ana
   );
   return {
     findings: deduplicated.sort(compareFindings),
-    scope: scope.evidence,
+    scope: analysisScope,
     analysisLimitations: [
       'Static observations are limited to selected TypeScript/TSX files and configured rules.',
       'Readonly evidence is compile-time surface evidence, not deep runtime immutability.',

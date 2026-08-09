@@ -50,6 +50,7 @@ export const resolveScope = (root: string, policy: Policy): ResolvedScope => {
     domainPaths,
     boundaryPaths,
     excludedPaths: sort([...new Set(excludedMatches)]),
+    unloadedPaths: [],
     unmatchedGlobs,
     complete: scannedPaths.length > 0 && !requiredUnmatched
   };

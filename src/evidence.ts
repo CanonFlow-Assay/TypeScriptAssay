@@ -200,13 +200,13 @@ export const evaluate = (
     generatedAt: clock(controlledClock),
     candidate: {
       revision: gitRevision(loaded.root),
-      sourceContentDigest: sourceContentDigest(loaded.root, scope.evidence.scannedPaths)
+      sourceContentDigest: sourceContentDigest(loaded.root, analysis.scope.scannedPaths)
     },
     policy: { profile: loaded.policy.profile, digest: loaded.digest },
     ruleCatalogDigest,
     packageLockDigest: lockDigest,
     toolchain: runtimeToolchain(),
-    scope: scope.evidence,
+    scope: analysis.scope,
     findings: sortedFindings,
     findingsDigest: sha256(canonicalJson(sortedFindings)),
     requiredCommands: commands,
@@ -239,6 +239,7 @@ export const toolFailureEvaluation = (
         domainPaths: [],
         boundaryPaths: [],
         excludedPaths: [],
+        unloadedPaths: [],
         unmatchedGlobs: [],
         complete: false
       },

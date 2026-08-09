@@ -50,6 +50,7 @@ export interface ScopeEvidence {
   readonly domainPaths: readonly string[];
   readonly boundaryPaths: readonly string[];
   readonly excludedPaths: readonly string[];
+  readonly unloadedPaths: readonly string[];
   readonly unmatchedGlobs: readonly string[];
   readonly complete: boolean;
 }
