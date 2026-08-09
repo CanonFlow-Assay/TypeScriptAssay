@@ -15,15 +15,15 @@ unknown external input → runtime decode / validate → trusted immutable domai
                        → explicit discriminated outcomes → named effect adapters
 ```
 
-It is framework-neutral for inspected projects: their code need not use Node, fp-ts, Effect, Zod, Valibot, ArkType, React, Next.js, NestJS, or a result library. The `ts-assay` CLI itself runs on pinned Node `20.20.2`.
+It is framework-neutral for inspected projects: their code need not use Node, fp-ts, Effect, Zod, Valibot, ArkType, React, Next.js, NestJS, or a result library. The `ts-assay` CLI runs on Node `>=20.20.2 <21`.
 
 ## What it is not
 
-It is not an auto-refactoring engine, framework generator, AI-agent orchestrator, CI platform, test runner, runtime schema validator, security review, or replacement for human domain judgment. There is no `--fix`, telemetry, SaaS dependency, AI call, package publishing, or release automation in this repository.
+It is not an auto-refactoring engine, framework generator, AI-agent orchestrator, CI platform, test runner, runtime schema validator, security review, or replacement for human domain judgment. There is no `--fix`, telemetry, SaaS dependency, AI call, or release automation in this repository. Publishing is a separate human-authorized action.
 
 ## Install and run from this checkout
 
-Node `20.20.2`, npm `10.8.2`, and TypeScript `5.7.3` are pinned in the repository and lockfile.
+Authoring and CI evidence are pinned to Node `20.20.2`, npm `10.8.2`, and TypeScript `5.7.3` in the repository and lockfile. The published CLI declares the tested consumer runtime range Node `>=20.20.2 <21`; it does not impose an npm engine.
 
 ```text
 npm ci

@@ -1,8 +1,23 @@
 {
   "name": "typescript-assay",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Deterministic functional-TypeScript engineering-policy verifier",
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CanonFlow-Assay/TypeScriptAssay.git"
+  },
+  "homepage": "https://github.com/CanonFlow-Assay/TypeScriptAssay#readme",
+  "bugs": {
+    "url": "https://github.com/CanonFlow-Assay/TypeScriptAssay/issues"
+  },
+  "keywords": [
+    "typescript",
+    "static-analysis",
+    "functional-programming",
+    "engineering-policy",
+    "sarif"
+  ],
   "private": false,
   "type": "module",
   "files": [
@@ -17,8 +32,7 @@
     "ts-assay": "./dist/src/cli.js"
   },
   "engines": {
-    "node": "20.20.2",
-    "npm": "10.8.2"
+    "node": ">=20.20.2 <21"
   },
   "packageManager": "npm@10.8.2",
   "scripts": {
