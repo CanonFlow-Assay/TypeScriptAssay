@@ -44,6 +44,8 @@ It records no boundary or unloaded paths. It records 758 excluded TypeScript pat
 
 The final `verify` used a controlled clock of `2026-08-09T05:00:00.000Z` and returned `Pass` with `authoritative: true`, under the explicitly observed scope above. It retained all 23 baseline findings visibly.
 
+The exact local-only policy, canonical receipt, SARIF report, and checksum manifest are committed in [the M1 evidence bundle](evidence/m1-octokit-graphqljs/). Verify the bundle from that directory with `sha256sum -c SHA256SUMS`.
+
 | Evidence                     | SHA-256                                                            |
 | ---------------------------- | ------------------------------------------------------------------ |
 | consumer source content      | `22f74abdc3befbf35e6e2a6adf994f3461734c004c847f0c49aae049384335ce` |

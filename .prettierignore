@@ -1,0 +1,4 @@
+# Canonical external M1 evidence; formatting would change the recorded hashes.
+docs/evidence/m1-octokit-graphqljs/policy.json
+docs/evidence/m1-octokit-graphqljs/receipt.json
+docs/evidence/m1-octokit-graphqljs/report.sarif
