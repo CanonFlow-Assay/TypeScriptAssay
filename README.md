@@ -15,7 +15,7 @@ unknown external input → runtime decode / validate → trusted immutable domai
                        → explicit discriminated outcomes → named effect adapters
 ```
 
-It is framework-neutral. It requires none of fp-ts, Effect, Zod, Valibot, ArkType, React, Node, Next.js, NestJS, or a result library.
+It is framework-neutral for inspected projects: their code need not use Node, fp-ts, Effect, Zod, Valibot, ArkType, React, Next.js, NestJS, or a result library. The `ts-assay` CLI itself runs on pinned Node `20.20.2`.
 
 ## What it is not
 
