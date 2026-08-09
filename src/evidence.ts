@@ -206,6 +206,7 @@ export const evaluate = (
     ruleCatalogDigest,
     packageLockDigest: lockDigest,
     toolchain: runtimeToolchain(),
+    projectConfig: analysis.projectConfig,
     scope: analysis.scope,
     findings: sortedFindings,
     findingsDigest: sha256(canonicalJson(sortedFindings)),
@@ -234,6 +235,11 @@ export const toolFailureEvaluation = (
       ruleCatalogDigest,
       packageLockDigest: null,
       toolchain: runtimeToolchain(),
+      projectConfig: {
+        chain: [],
+        effectiveCompilerOptionsDigest: null,
+        complete: false
+      },
       scope: {
         scannedPaths: [],
         domainPaths: [],

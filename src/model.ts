@@ -55,6 +55,17 @@ export interface ScopeEvidence {
   readonly complete: boolean;
 }
 
+export interface ConfigFileEvidence {
+  readonly path: string;
+  readonly digest: string | null;
+}
+
+export interface ProjectConfigEvidence {
+  readonly chain: readonly ConfigFileEvidence[];
+  readonly effectiveCompilerOptionsDigest: string | null;
+  readonly complete: boolean;
+}
+
 export interface CommandEvidence {
   readonly command: string;
   readonly status: 'passed' | 'failed' | 'not-run' | 'tool-failure';
@@ -65,6 +76,7 @@ export interface CommandEvidence {
 export interface AnalysisResult {
   readonly findings: readonly Finding[];
   readonly scope: ScopeEvidence;
+  readonly projectConfig: ProjectConfigEvidence;
   readonly analysisLimitations: readonly string[];
   readonly toolFailures: readonly string[];
 }
@@ -86,6 +98,7 @@ export interface Receipt {
     readonly typescript: string;
     readonly cli: string;
   };
+  readonly projectConfig: ProjectConfigEvidence;
   readonly scope: ScopeEvidence;
   readonly findings: readonly Finding[];
   readonly findingsDigest: string;
