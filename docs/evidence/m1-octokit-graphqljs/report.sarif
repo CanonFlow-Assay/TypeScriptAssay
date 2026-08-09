@@ -1,0 +1,749 @@
+{
+  "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+  "runs": [
+    {
+      "results": [
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/error.ts"
+                },
+                "region": {
+                  "startColumn": 5,
+                  "startLine": 29
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Mutation through a property or index is forbidden in domain code."
+          },
+          "partialFingerprints": {
+            "ts-assay/v0.1": "1241fd45f5a54a3af096b37ff765d3c843b58c8c550969dc7095728d82371495"
+          },
+          "properties": {
+            "baseline": true
+          },
+          "ruleId": "TSA-I02"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/error.ts"
+                },
+                "region": {
+                  "startColumn": 5,
+                  "startLine": 30
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Mutation through a property or index is forbidden in domain code."
+          },
+          "partialFingerprints": {
+            "ts-assay/v0.1": "c878edac3b377a9ad4e6a2bd2b9dced96cc988ecf88a5dadc4a8efbcabf6b6c0"
+          },
+          "properties": {
+            "baseline": true
+          },
+          "ruleId": "TSA-I02"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/graphql.ts"
+                },
+                "region": {
+                  "startColumn": 7,
+                  "startLine": 56
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Dynamic indexed access is not refined by a recognized guard."
+          },
+          "partialFingerprints": {
+            "ts-assay/v0.1": "f38b3701583af994ed0ecb74d1bf0a38a4b5b0a9aca80c5cd6464b74701fadbf"
+          },
+          "properties": {
+            "baseline": true
+          },
+          "ruleId": "TSA-D03"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/graphql.ts"
+                },
+                "region": {
+                  "startColumn": 7,
+                  "startLine": 56
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Mutation through a property or index is forbidden in domain code."
+          },
+          "partialFingerprints": {
+            "ts-assay/v0.1": "028dff720a2dfaa61e6874b3996adc4eb1eba54c3d645e4e9f33c53ed357c68f"
+          },
+          "properties": {
+            "baseline": true
+          },
+          "ruleId": "TSA-I02"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/graphql.ts"
+                },
+                "region": {
+                  "startColumn": 21,
+                  "startLine": 56
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Dynamic indexed access is not refined by a recognized guard."
+          },
+          "partialFingerprints": {
+            "ts-assay/v0.1": "66c038ec9e282c0643d7d81a160f4241aa65c00476635c88450dea3868252d34"
+          },
+          "properties": {
+            "baseline": true
+          },
+          "ruleId": "TSA-D03"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/graphql.ts"
+                },
+                "region": {
+                  "startColumn": 7,
+                  "startLine": 61
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Mutation through a property or index is forbidden in domain code."
+          },
+          "partialFingerprints": {
+            "ts-assay/v0.1": "d88eab1b0e50e779b6b94e23a1cafb5fb99f9c366e34a159570c967883a6c6e4"
+          },
+          "properties": {
+            "baseline": true
+          },
+          "ruleId": "TSA-I02"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/graphql.ts"
+                },
+                "region": {
+                  "startColumn": 5,
+                  "startLine": 64
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Dynamic indexed access is not refined by a recognized guard."
+          },
+          "partialFingerprints": {
+            "ts-assay/v0.1": "b851cddbc2e8c93117a989f3150954211759a4784e5e65539681ec7f3bbcc24e"
+          },
+          "properties": {
+            "baseline": true
+          },
+          "ruleId": "TSA-D03"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/graphql.ts"
+                },
+                "region": {
+                  "startColumn": 5,
+                  "startLine": 64
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Mutation through a property or index is forbidden in domain code."
+          },
+          "partialFingerprints": {
+            "ts-assay/v0.1": "2c6dfa2a2d0cf157c4426c424a4616a780743211de3795bb48e7617a55cf89c5"
+          },
+          "properties": {
+            "baseline": true
+          },
+          "ruleId": "TSA-I02"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/graphql.ts"
+                },
+                "region": {
+                  "startColumn": 29,
+                  "startLine": 64
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Dynamic indexed access is not refined by a recognized guard."
+          },
+          "partialFingerprints": {
+            "ts-assay/v0.1": "976998c874104c07f5075838be6a8cb2d5a10eb2eefe289d61ca24742c95a032"
+          },
+          "properties": {
+            "baseline": true
+          },
+          "ruleId": "TSA-D03"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/graphql.ts"
+                },
+                "region": {
+                  "startColumn": 6,
+                  "startLine": 66
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Type assertion requires explicit soundness-escape policy treatment."
+          },
+          "partialFingerprints": {
+            "ts-assay/v0.1": "78c609e91a98f40538847e2e84d1e3ee32fbd0d7fa7226dfcc3445f207a21266"
+          },
+          "properties": {
+            "baseline": true
+          },
+          "ruleId": "TSA-B03"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/graphql.ts"
+                },
+                "region": {
+                  "startColumn": 5,
+                  "startLine": 72
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Mutation through a property or index is forbidden in domain code."
+          },
+          "partialFingerprints": {
+            "ts-assay/v0.1": "b0d13b1cfbba9fb087126898d03ce84eda7a1ac0e55d281c308c463c0e016099"
+          },
+          "properties": {
+            "baseline": true
+          },
+          "ruleId": "TSA-I02"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/graphql.ts"
+                },
+                "region": {
+                  "startColumn": 9,
+                  "startLine": 79
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Dynamic indexed access is not refined by a recognized guard."
+          },
+          "partialFingerprints": {
+            "ts-assay/v0.1": "965b7d01b6b79e48c5efd612b5b1bae1931e8563acea0db13d23348d36d1e27e"
+          },
+          "properties": {
+            "baseline": true
+          },
+          "ruleId": "TSA-D03"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/graphql.ts"
+                },
+                "region": {
+                  "startColumn": 9,
+                  "startLine": 79
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Mutation through a property or index is forbidden in domain code."
+          },
+          "partialFingerprints": {
+            "ts-assay/v0.1": "8cb27d887924c649208278aabc2d8fe08da8e5db3177354026030284dad1ade6"
+          },
+          "properties": {
+            "baseline": true
+          },
+          "ruleId": "TSA-I02"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/graphql.ts"
+                },
+                "region": {
+                  "startColumn": 24,
+                  "startLine": 79
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Dynamic indexed access is not refined by a recognized guard."
+          },
+          "partialFingerprints": {
+            "ts-assay/v0.1": "13e15d78f29cf1281cae00732adb6390dea44897ccfe36560d541ebdea40935b"
+          },
+          "properties": {
+            "baseline": true
+          },
+          "ruleId": "TSA-D03"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/graphql.ts"
+                },
+                "region": {
+                  "startColumn": 7,
+                  "startLine": 82
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Throw is forbidden in configured domain paths."
+          },
+          "partialFingerprints": {
+            "ts-assay/v0.1": "b0983afd096b917e0f60a6ac9240d28e7e28aa1bad124a919af24f38f2dd44b8"
+          },
+          "properties": {
+            "baseline": true
+          },
+          "ruleId": "TSA-D01"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/graphql.ts"
+                },
+                "region": {
+                  "startColumn": 9,
+                  "startLine": 85
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Type assertion requires explicit soundness-escape policy treatment."
+          },
+          "partialFingerprints": {
+            "ts-assay/v0.1": "f5bfc422ccd9fc89f88721fffcbf39eca2a6efe8ed2ae7d31582bfac5f7017c9"
+          },
+          "properties": {
+            "baseline": true
+          },
+          "ruleId": "TSA-B03"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/types.ts"
+                },
+                "region": {
+                  "startColumn": 3,
+                  "startLine": 10
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Public domain object property is not readonly."
+          },
+          "partialFingerprints": {
+            "ts-assay/v0.1": "35613355c38b243fd9dd512c260441f14c94f37518cfff60d06e0addcd0d0773"
+          },
+          "properties": {
+            "baseline": true
+          },
+          "ruleId": "TSA-I01"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/types.ts"
+                },
+                "region": {
+                  "startColumn": 3,
+                  "startLine": 39
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Public domain object property is not readonly."
+          },
+          "partialFingerprints": {
+            "ts-assay/v0.1": "97da42513e448fc44e88aa0d93e473bfee09a66d6342f165f3d684cfcc14d529"
+          },
+          "properties": {
+            "baseline": true
+          },
+          "ruleId": "TSA-I01"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/types.ts"
+                },
+                "region": {
+                  "startColumn": 3,
+                  "startLine": 44
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Public domain object property is not readonly."
+          },
+          "partialFingerprints": {
+            "ts-assay/v0.1": "131b3a750fb97af8723b2183f3fda095c47ccebb85afa6670a30260eb68c372c"
+          },
+          "properties": {
+            "baseline": true
+          },
+          "ruleId": "TSA-I01"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/types.ts"
+                },
+                "region": {
+                  "startColumn": 18,
+                  "startLine": 52
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Explicit any is forbidden."
+          },
+          "partialFingerprints": {
+            "ts-assay/v0.1": "a5b389f4edec9ad136842f166ce6cdc0d8a0be3b0326adc1713bf83ed3142deb"
+          },
+          "properties": {
+            "baseline": true
+          },
+          "ruleId": "TSA-B02"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/types.ts"
+                },
+                "region": {
+                  "startColumn": 3,
+                  "startLine": 56
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Public domain object property is not readonly."
+          },
+          "partialFingerprints": {
+            "ts-assay/v0.1": "e19025fc70cf2ed31795eadafa66d222c92cb86316feaef1a3035948045527be"
+          },
+          "properties": {
+            "baseline": true
+          },
+          "ruleId": "TSA-I01"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/types.ts"
+                },
+                "region": {
+                  "startColumn": 3,
+                  "startLine": 57
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Public domain object property is not readonly."
+          },
+          "partialFingerprints": {
+            "ts-assay/v0.1": "591a70888374535623715b9c4574771f4a5e1d79c158163fdb72266ec6618be2"
+          },
+          "properties": {
+            "baseline": true
+          },
+          "ruleId": "TSA-I01"
+        },
+        {
+          "level": "error",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/types.ts"
+                },
+                "region": {
+                  "startColumn": 36,
+                  "startLine": 63
+                }
+              }
+            }
+          ],
+          "message": {
+            "text": "Explicit any is forbidden."
+          },
+          "partialFingerprints": {
+            "ts-assay/v0.1": "e7be933f3fd2ca35881ff23eb911dab6185d638e5a73861c210b243893802e4a"
+          },
+          "properties": {
+            "baseline": true
+          },
+          "ruleId": "TSA-B02"
+        }
+      ],
+      "tool": {
+        "driver": {
+          "informationUri": "https://github.com/CanonFlow-Assay/TypeScriptAssay",
+          "name": "TypeScriptAssay",
+          "rules": [
+            {
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "fullDescription": {
+                "text": "In configured boundary files, exported function parameters whose annotation names a configured trusted domain type are reported. This is a bounded ownership check, not a proof that every JSON value was decoded."
+              },
+              "id": "TSA-B01",
+              "shortDescription": {
+                "text": "Boundary parameters do not claim a trusted domain type"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "fullDescription": {
+                "text": "Reports explicit any syntax and compiler-reported implicit-any diagnostics in the selected scope."
+              },
+              "id": "TSA-B02",
+              "shortDescription": {
+                "text": "any is forbidden"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "fullDescription": {
+                "text": "Reports as, type assertions, non-null assertions, @ts-ignore, and @ts-expect-error; policy chooses forbid or allow-with-receipt for each class."
+              },
+              "id": "TSA-B03",
+              "shortDescription": {
+                "text": "Soundness escape hatches are explicit policy evidence"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "fullDescription": {
+                "text": "Reports throw statements in configured domain files. It does not infer whether every function result is a result-like union."
+              },
+              "id": "TSA-D01",
+              "shortDescription": {
+                "text": "Domain failures do not throw"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "fullDescription": {
+                "text": "For switch expressions whose checked union members expose a configured string-literal discriminator, reports missing literal cases. A default clause alone is not accepted as proof of handling."
+              },
+              "id": "TSA-D02",
+              "shortDescription": {
+                "text": "Configured discriminated unions are exhaustive"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "fullDescription": {
+                "text": "Reports non-literal element access in domain files unless it is lexically guarded by key in object or Object.hasOwn(object, key). It is not a proof of every runtime key invariant."
+              },
+              "id": "TSA-D03",
+              "shortDescription": {
+                "text": "Dynamic indexed access is refined before use"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "fullDescription": {
+                "text": "Reports imports of known Node infrastructure modules and direct use of fetch, console, process, timers, Math.random, and Date.now in domain files."
+              },
+              "id": "TSA-E01",
+              "shortDescription": {
+                "text": "Domain modules do not directly use known infrastructure effects"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "fullDescription": {
+                "text": "Reports a domain import that resolves to a configured boundary/adapters source file. It does not infer architectural intent beyond that dependency edge."
+              },
+              "id": "TSA-E02",
+              "shortDescription": {
+                "text": "Domain modules do not depend on configured adapters"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "fullDescription": {
+                "text": "Reports Array, Map, Set and mutable object properties in exported domain type/interface declarations. readonly is static only; no deep runtime immutability is claimed."
+              },
+              "id": "TSA-I01",
+              "shortDescription": {
+                "text": "Public domain contracts do not expose mutable collection or object shapes"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "fullDescription": {
+                "text": "Reports assignments through a property/index and recognized mutating collection methods in configured domain files."
+              },
+              "id": "TSA-I02",
+              "shortDescription": {
+                "text": "Domain mutation is forbidden"
+              }
+            },
+            {
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "fullDescription": {
+                "text": "Reports references in domain files to a policy-listed transport/DTO type name. It does not prove runtime schema completeness."
+              },
+              "id": "TSA-S01",
+              "shortDescription": {
+                "text": "Configured transport type names do not enter domain code"
+              }
+            }
+          ],
+          "version": "0.1.0"
+        }
+      }
+    }
+  ],
+  "version": "2.1.0"
+}
