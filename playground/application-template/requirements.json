@@ -1,0 +1,17 @@
+{
+  "schema": "assay-requirements/0.1",
+  "requirements": [
+    {
+      "id": "RES-001",
+      "description": "Positive safe-integer stock reservation, including zero and exact-stock boundaries, has explicit immutable outcomes."
+    },
+    {
+      "id": "RES-002",
+      "description": "Unknown input decodes only own data properties and produces the pinned reservation wire contract."
+    },
+    {
+      "id": "RES-HTTP-001",
+      "description": "A controlled local HTTP stock fixture permits at most two attempts, retries503, and preserves explicit unavailable/invalid-reply outcomes."
+    }
+  ]
+}

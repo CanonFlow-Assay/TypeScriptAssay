@@ -9,3 +9,5 @@ Each verify receipt binds candidate revision or source digest, policy/profile di
 v0.1 discovers `package-lock.json` at or above the policy root. If it cannot find one, `verify` is `Inconclusive` and non-authoritative rather than guessing an npm dependency graph.
 
 The only verdicts are `Pass`, `Fail`, `Inconclusive`, and `ToolFailure`. `Pass` is authoritative only for `verify` with complete successfully loaded scope, no tool failures, all required commands passed, and no new blocking findings. `scan` never treats its not-run commands as passed.
+
+Verification now compares source scope/content, raw policy bytes, resolved configuration-chain bytes and dependency-lock digest before/after required commands. Changed observed inputs are Inconclusive and cannot authorize the changed candidate; the receipt retains the original analyzed source-content digest. CLI artifact destinations are checked before execution and again before writes, including symlink/hardlink aliases, so failure receipts cannot overwrite observed inputs. Existing receipt schemas, verdict names, rule admission and normal command exit meanings are unchanged.

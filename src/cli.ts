@@ -1,9 +1,11 @@
 #!/usr/bin/env node
 import { resolve } from 'node:path';
+import { existsSync } from 'node:fs';
 import { canonicalJson } from './canonical.js';
 import { findRule, ruleCatalogDigest } from './catalog.js';
 import { evaluate, runtimeToolchain, toolFailureEvaluation, writeArtifacts } from './evidence.js';
 import { loadPolicy } from './policy.js';
+import { validateArtifactPaths } from './artifact-paths.js';
 
 interface OutputOptions {
   readonly json: string;
@@ -118,9 +120,24 @@ const main = (): number => {
     );
     return 2;
   }
+  let artifactPathsSafe = true;
+  let policyAvailable = false;
   try {
     const loaded = loadPolicy(resolve(first));
+    policyAvailable = true;
+    try {
+      validateArtifactPaths(resolve(first), [output.json, output.sarif], loaded);
+    } catch (error) {
+      artifactPathsSafe = false;
+      throw error;
+    }
     const evaluation = evaluate(loaded, command, output.clock);
+    try {
+      validateArtifactPaths(resolve(first), [output.json, output.sarif], loaded);
+    } catch (error) {
+      artifactPathsSafe = false;
+      throw error;
+    }
     writeArtifacts(evaluation, output.json, output.sarif);
     process.stdout.write(
       `${readable(evaluation.receipt)}\njson: ${output.json}\nsarif: ${output.sarif}\n`
@@ -133,7 +150,14 @@ const main = (): number => {
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     const failure = toolFailureEvaluation(command, message, output.clock);
-    writeArtifacts(failure, output.json, output.sarif);
+    try {
+      if (!artifactPathsSafe || (!policyAvailable && [output.json, output.sarif].some(existsSync)))
+        throw new Error('Unsafe failure-artifact destination');
+      validateArtifactPaths(resolve(first), [output.json, output.sarif]);
+      writeArtifacts(failure, output.json, output.sarif);
+    } catch {
+      /* Never overwrite observed inputs with a failure artifact. */
+    }
     process.stdout.write(
       `${readable(failure.receipt)}\njson: ${output.json}\nsarif: ${output.sarif}\n`
     );

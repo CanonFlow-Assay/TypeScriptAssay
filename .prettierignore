@@ -2,3 +2,6 @@
 docs/evidence/m1-octokit-graphqljs/policy.json
 docs/evidence/m1-octokit-graphqljs/receipt.json
 docs/evidence/m1-octokit-graphqljs/report.sarif
+
+# Generated consumer compiler output.
+playground/reservation/build/

@@ -24,7 +24,24 @@ jobs:
       - run: npm test
       - run: npm run build
       - run: node dist/src/cli.js verify examples/clean --json artifacts/receipt.json --sarif artifacts/report.sarif
+      - name: Playground protocol and acceptance tests
+        run: npm run test:playground
+      - name: Lifecycle protocol tests
+        run: npm run test:lifecycle
+      - name: Reservation mutation playground
+        run: npm run playground
+      - name: Prepare dependency cache for the offline package consumer
+        run: |
+          cache_root="$(mktemp -d)"
+          npm pack --ignore-scripts --json --pack-destination "$cache_root" > "$cache_root/pack.json"
+          archive="$(node -e 'console.log(JSON.parse(require("fs").readFileSync(process.argv[1], "utf8"))[0].filename)' "$cache_root/pack.json")"
+          npm install --prefix "$cache_root/consumer" --ignore-scripts --no-audit --no-fund "$cache_root/$archive"
+      - name: Independent package consumer and retained repair lifecycle
+        run: npm run lifecycle -- "$PWD/artifacts/ci-lifecycle"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
         with:
           name: ts-assay-evidence
           path: artifacts/
+          include-hidden-files: true
+          retention-days: 14

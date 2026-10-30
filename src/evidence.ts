@@ -168,24 +168,54 @@ export const evaluate = (
   controlledClock?: string
 ): Evaluation => {
   const scope = resolveScope(loaded.root, loaded.policy);
+  const beforeSource = sourceContentDigest(loaded.root, scope.evidence.scannedPaths);
+  const beforePolicy = sha256(readFileSync(loaded.path));
+  const lockDigest = packageLockDigest(loaded.root);
   const analysis = analyze(loaded.root, loaded.policy, scope);
   const commands = runCommands(loaded.policy.requiredCommands, loaded.root, mode === 'verify');
-  const lockDigest = packageLockDigest(loaded.root);
+  let inputsFresh = false;
+  try {
+    inputsFresh =
+      beforeSource === sourceContentDigest(loaded.root, scope.evidence.scannedPaths) &&
+      beforePolicy === sha256(readFileSync(loaded.path)) &&
+      lockDigest === packageLockDigest(loaded.root) &&
+      canonicalJson(scope.evidence.scannedPaths) ===
+        canonicalJson(resolveScope(loaded.root, loaded.policy).evidence.scannedPaths) &&
+      analysis.projectConfig.chain.every(
+        (config) =>
+          config.digest === null ||
+          config.digest === sha256(readFileSync(resolve(loaded.root, config.path)))
+      );
+  } catch {
+    inputsFresh = false;
+  }
   const initialDecision = decide(mode, analysis, commands);
   const decision =
-    mode === 'verify' && lockDigest === null
+    !inputsFresh && initialDecision.verdict.kind !== 'ToolFailure'
       ? {
           verdict: {
             kind: 'Inconclusive' as const,
-            reason: 'No package-lock.json was available to bind the npm dependency graph.'
+            reason: 'Observed source/policy/configuration/lock inputs changed during execution.'
           },
           authoritative: false,
           limitations: [
             ...initialDecision.limitations,
-            'No package-lock.json was found at or above the policy root; verify cannot bind the npm dependency graph.'
+            'Input freshness failed; analyzed bytes cannot authorize the changed candidate.'
           ]
         }
-      : initialDecision;
+      : mode === 'verify' && lockDigest === null
+        ? {
+            verdict: {
+              kind: 'Inconclusive' as const,
+              reason: 'No package-lock.json was available to bind the npm dependency graph.'
+            },
+            authoritative: false,
+            limitations: [
+              ...initialDecision.limitations,
+              'No package-lock.json was found at or above the policy root; verify cannot bind the npm dependency graph.'
+            ]
+          }
+        : initialDecision;
   const sortedFindings = [...analysis.findings].sort(
     (left, right) =>
       left.path.localeCompare(right.path) ||
@@ -200,7 +230,7 @@ export const evaluate = (
     generatedAt: clock(controlledClock),
     candidate: {
       revision: gitRevision(loaded.root),
-      sourceContentDigest: sourceContentDigest(loaded.root, analysis.scope.scannedPaths)
+      sourceContentDigest: beforeSource
     },
     policy: { profile: loaded.policy.profile, digest: loaded.digest },
     ruleCatalogDigest,

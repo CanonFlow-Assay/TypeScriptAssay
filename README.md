@@ -41,6 +41,10 @@ node dist/src/cli.js explain TSA-D02
 
 `verify` exits `0` for Pass, `1` for Fail, and `2` for Inconclusive or ToolFailure. Invalid policy, a missing target, a parser/project failure, incomplete source scope, unavailable required commands, and skipped evidence cannot become Pass.
 
+## Runnable playground
+
+Run `npm run playground` for the [reservation application](playground/README.md): strict typed outcomes, runtime decoding, fourteen acceptance tests, and five real compiler/test mutation comparisons with raw evidence and offline investigation advice. Surviving candidates remain unresolved; the existing checker receipt retains its original authority. The pinned Node 20.20.2/npm 10.8.2 lane passes all 46 engine regressions, including the installed package consumer, plus the playground acceptance and adapter regressions.
+
 ## Policy
 
 Create `.tsassay.json` at the project root:
@@ -84,3 +88,9 @@ See [scope and profiles](docs/scope-and-profiles.md), [the evidence model](docs/
 ## Contributing and security
 
 See [CONTRIBUTING.md](CONTRIBUTING.md), [SECURITY.md](SECURITY.md), and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md). Licensed under [Apache-2.0](LICENSE).
+
+For the interactive local browser lab, run `npm run playground:serve` and open http://127.0.0.1:4318. It exercises the actual domain and reads local evidence files; it does not run the checker in the browser.
+
+## Independent application lifecycle
+
+Run `npm run lifecycle` on pinned Node 20.20.2/npm 10.8.2 from a clean committed checkout. The [lifecycle preview](docs/application-lifecycle.md) installs a real local package into an independent consumer, freezes original requirements/tests/contracts, retains a failing added acceptance case, repairs it, and checks registered contract and loopback HTTP resilience fixtures. Source/package/compiler/evidence changes and forged readiness cannot waive the original obligations. No package is published.

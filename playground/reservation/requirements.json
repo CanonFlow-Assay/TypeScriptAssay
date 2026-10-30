@@ -1,0 +1,13 @@
+{
+  "schemaVersion": "assay-requirements/0.1",
+  "requirements": [
+    {
+      "id": "RES-001",
+      "description": "Only positive safe-integer quantities can reserve available stock; an exact-stock reservation succeeds; decisions are immutable and explicit."
+    },
+    {
+      "id": "RES-002",
+      "description": "Unknown transport inputs must be validated and normalized without mutating the caller."
+    }
+  ]
+}

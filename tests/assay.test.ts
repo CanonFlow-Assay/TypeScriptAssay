@@ -7,7 +7,9 @@ import {
   readFileSync,
   rmSync,
   unlinkSync,
-  writeFileSync
+  writeFileSync,
+  symlinkSync,
+  linkSync
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
@@ -527,3 +529,69 @@ const runCli = (mode: 'scan' | 'verify', target: string, json?: string, sarif?: 
     ],
     { encoding: 'utf8' }
   );
+
+for (const changed of [
+  'src/domain/user.ts',
+  '.tsassay.json',
+  'tsconfig.json',
+  'package-lock.json'
+]) {
+  test('changed input during command is Inconclusive: ' + changed, () => {
+    const root = copiedFixture('TSA-B01', 'good');
+    try {
+      const policy = JSON.parse(readFileSync(resolve(root, '.tsassay.json'), 'utf8')) as Record<
+        string,
+        unknown
+      >;
+      policy.requiredCommands = [
+        'node -e ' +
+          JSON.stringify('require("node:fs").appendFileSync(' + JSON.stringify(changed) + '," ")')
+      ];
+      writeFileSync(resolve(root, '.tsassay.json'), JSON.stringify(policy));
+      const receipt = evaluate(loadPolicy(root), 'verify', clock).receipt;
+      assert.equal(receipt.verdict.kind, 'Inconclusive');
+      assert.equal(receipt.authoritative, false);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+}
+for (const alias of ['source', 'policy', 'config', 'symlink', 'hardlink', 'command']) {
+  test('CLI cannot overwrite input through ' + alias + ' output', () => {
+    const root = copiedFixture('TSA-B01', 'good');
+    const outputRoot = mkdtempSync(resolve(tmpdir(), 'ts-assay-output-'));
+    try {
+      writeFileSync(resolve(root, 'runner.js'), 'process.exit(0);');
+      const policy = JSON.parse(readFileSync(resolve(root, '.tsassay.json'), 'utf8')) as Record<
+        string,
+        unknown
+      >;
+      policy.requiredCommands = ['node runner.js'];
+      writeFileSync(resolve(root, '.tsassay.json'), JSON.stringify(policy));
+      const target = resolve(
+        root,
+        alias === 'policy'
+          ? '.tsassay.json'
+          : alias === 'config'
+            ? 'tsconfig.json'
+            : alias === 'command'
+              ? 'runner.js'
+              : 'src/domain/user.ts'
+      );
+      let destination = target;
+      if (alias === 'symlink' || alias === 'hardlink') {
+        destination = resolve(outputRoot, 'alias.json');
+        (alias === 'symlink' ? symlinkSync : linkSync)(target, destination);
+      }
+      const original = readFileSync(target);
+      assert.equal(
+        runCli('verify', root, destination, resolve(outputRoot, 'report.sarif')).status,
+        2
+      );
+      assert.deepEqual(readFileSync(target), original);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+      rmSync(outputRoot, { recursive: true, force: true });
+    }
+  });
+}

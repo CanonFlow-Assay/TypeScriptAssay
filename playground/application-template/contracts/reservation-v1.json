@@ -1,0 +1,6 @@
+{
+  "schema": "reservation-wire/1",
+  "domainCases": ["InvalidStock", "InvalidQuantity", "InsufficientStock", "Reserved"],
+  "decoderCases": ["InvalidInput", "Decoded"],
+  "reservedFields": ["kind", "quantity", "remaining"]
+}

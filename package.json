@@ -26,7 +26,8 @@
     "LICENSE",
     "SECURITY.md",
     "CONTRIBUTING.md",
-    "CODE_OF_CONDUCT.md"
+    "CODE_OF_CONDUCT.md",
+    "workflow"
   ],
   "bin": {
     "ts-assay": "./dist/src/cli.js"
@@ -42,7 +43,12 @@
     "typecheck": "tsc --noEmit",
     "build": "tsc -p tsconfig.build.json",
     "test": "npm run build && node --test dist/tests/assay.test.js",
-    "verify": "npm run format:check && npm run lint && npm run typecheck && npm test && npm run build"
+    "verify": "npm run format:check && npm run lint && npm run typecheck && npm test && npm run build",
+    "playground": "npm run build && node playground/run.mjs",
+    "playground:serve": "node playground/reservation/run-tests.mjs && node playground/serve.mjs",
+    "test:playground": "node playground/reservation/run-tests.mjs && node --test playground/workflow.test.mjs",
+    "lifecycle": "node eng/try-lifecycle.mjs",
+    "test:lifecycle": "node --test workflow/tests/*.test.mjs"
   },
   "devDependencies": {
     "@eslint/js": "9.17.0",

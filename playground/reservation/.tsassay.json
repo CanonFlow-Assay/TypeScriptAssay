@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "ts-assay-policy/0.1",
+  "profile": "new",
+  "domainGlobs": ["src/domain/**/*.ts"],
+  "boundaryGlobs": ["src/adapters/**/*.ts"],
+  "excludedGlobs": ["build/**"],
+  "requiredCommands": ["node run-tests.mjs"],
+  "escapeHatches": {
+    "assertions": "forbid",
+    "nonNullAssertions": "forbid",
+    "directives": "forbid"
+  },
+  "discriminantFields": ["kind"],
+  "transportTypeNames": []
+}

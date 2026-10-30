@@ -1,0 +1,79 @@
+{
+  "schema": "assay-application/0.1",
+  "id": "reservation-typescript",
+  "language": "typescript",
+  "policy": ".tsassay.json",
+  "contract": "contracts/reservation-v1.json",
+  "prepareCommand": ["node", "eng/prepare.mjs"],
+  "files": [
+    "src/domain/reservation.ts",
+    "src/adapters/decode.ts",
+    "src/adapters/stock-client.ts",
+    "tests/original.test.mjs",
+    "tests/baseline.test.mjs",
+    "tests/contract.test.mjs",
+    "tests/resilience.test.mjs",
+    "contracts/reservation-v1.json",
+    "eng/test.mjs",
+    "eng/prepare.mjs",
+    "tsconfig.json",
+    ".tsassay.json"
+  ],
+  "selections": [
+    {
+      "id": "original",
+      "minimum": 14,
+      "names": [
+        "RES-001 positive reservation",
+        "RES-001 insufficient stock",
+        "RES-001 negative request",
+        "RES-001 zero request is invalid",
+        "RES-001 exact stock is accepted",
+        "RES-001 empty stock rejects positive request",
+        "RES-001 invalid stock is explicit",
+        "RES-001 invalid quantity is explicit",
+        "RES-001 immutable outcome",
+        "RES-002 transport rejects unknown values",
+        "RES-002 transport creates trusted frozen value",
+        "RES-002 accessor fields are rejected without invoking getters",
+        "RES-002 descriptor failures are explicit invalid input",
+        "RES-002 inherited transport fields are rejected"
+      ],
+      "files": ["tests/original.test.mjs", "tests/baseline.test.mjs"],
+      "command": ["node", "--test", "--test-reporter=tap", "tests/baseline.test.mjs"]
+    }
+  ],
+  "probes": [
+    {
+      "id": "contract",
+      "requirementIds": ["RES-002"],
+      "minimum": 2,
+      "names": [
+        "WIRE-001 original reserved response remains compatible",
+        "WIRE-002 original decoder cases remain compatible"
+      ],
+      "files": ["tests/contract.test.mjs", "contracts/reservation-v1.json"],
+      "command": ["node", "--test", "--test-reporter=tap", "tests/contract.test.mjs"],
+      "scope": "Actual JSON round-trip of declared fixture outcomes; no universal wire-compatibility proof."
+    },
+    {
+      "id": "resilience",
+      "requirementIds": ["RES-HTTP-001"],
+      "minimum": 3,
+      "names": [
+        "HTTP-001 transient503 retries once then succeeds",
+        "HTTP-002 repeated503 stops after two attempts",
+        "HTTP-003 malformed reply is explicit"
+      ],
+      "files": ["tests/resilience.test.mjs"],
+      "command": ["node", "--test", "--test-reporter=tap", "tests/resilience.test.mjs"],
+      "scope": "Executed loopback HTTP fixture only; no production provider reliability claim."
+    }
+  ],
+  "runtimeFiles": [
+    "build/domain/reservation.js",
+    "build/adapters/decode.js",
+    "build/adapters/stock-client.js",
+    "build/compilation.json"
+  ]
+}
