@@ -94,3 +94,10 @@ For the interactive local browser lab, run `npm run playground:serve` and open h
 ## Independent application lifecycle
 
 Run `npm run lifecycle` on pinned Node 20.20.2/npm 10.8.2 from a clean committed checkout. The [lifecycle preview](docs/application-lifecycle.md) installs a real local package into an independent consumer, freezes original requirements/tests/contracts, retains a failing added acceptance case, repairs it, and checks registered contract and loopback HTTP resilience fixtures. Source/package/compiler/evidence changes and forged readiness cannot waive the original obligations. No package is published.
+
+## Estate evidence
+
+The estate test lane uses the checked-in Node and npm pins. Run the
+reservation mutation experiment and the independent lifecycle consumer
+as separate commands. Keep the surviving mutations and the lifecycle
+consumer archive identity with their respective receipts.
