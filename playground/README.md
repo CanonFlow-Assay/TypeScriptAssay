@@ -22,3 +22,6 @@ PATH="/path/to/node-v20.20.2-linux-x64/bin:$PATH" npm run playground
 No model calls, package publication, remote writes, business-correctness claim or release approval occurs.
 
 Run `npm run test:playground` for 14 acceptance tests plus 3 adapter regressions. The consumer clears old build output, resolves only the pinned 5.7.3 compiler, records compiler/source/emission hashes and requires at least 14 executed tests with zero failed/cancelled/skipped cases. An environment compiler override is ignored; failed compilation cannot reuse stale output. Unknown transport data must have own data properties; accessors and descriptor failures return InvalidInput.
+
+See [phase-1 portable convergence](CONVERGENCE.md) for the next bounded boundary
+candidate and its explicit exclusions.
